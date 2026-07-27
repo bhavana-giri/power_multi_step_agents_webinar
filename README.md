@@ -40,17 +40,17 @@ The landing page has prefilled query chips grouped per slide. Suggested flow —
 run everything once in **Primitive Memory**, then repeat in **Real-time Context
 Engine** (or alternate per act):
 
-1. **Session state** (slide 07) — click the chips in order:
+1. **Session state** (Live demo 01, slide 07) — click the chips in order:
    *"Show me hybrid SUVs."* → *"Keep it under $35k."* → *"Which of those has the best
    mileage?"* Both modes follow the pronoun, because both hold session state. Open the
    **Redis Memory** panel: primitive shows raw turns only; the engine shows working
    memory with a rolling summary.
-2. **Durable facts** (slide 08) — *"Remember this: I only want hybrids, and my budget
+2. **Durable facts** (Live demo 02, slide 08) — *"Remember this: I only want hybrids, and my budget
    is $35k max."* and *"I've decided — the RAV4 Hybrid is my top pick. Remember that."*
    In the panel, watch the engine's **Long-term memory** section fill as the server
    extracts facts in the background (hit Refresh after a few seconds). Primitive mode:
    the long-term section stays empty — that's where the primitives stop.
-3. **Relevant history** (slide 09) — *"What do you remember about my car preferences?"*
+3. **Relevant history** (Live demo 03, slide 09) — *"What do you remember about my car preferences?"*
    Open **Activity** to show the hybrid `long_term_memory.search` call (query + owner
    filter + returned memories) that got fused into the prompt.
 4. **Session two** (Part 04 of the deck) — click **⟳ New session**, then *"I'm back!
@@ -61,13 +61,13 @@ Engine** (or alternate per act):
 5. **Beyond memory** (Part 05 of the deck) — the *Context Retriever + Memory* chips.
    First ask *"Is the Toyota RAV4 Hybrid in stock today?"* in **Primitive Memory**
    mode: the agent answers it can't check live data — memory recalls; it can't look
-   things up (slide 30). Switch to **Real-time Context Engine** and ask again: the
+   things up (slide 34). Switch to **Real-time Context Engine** and ask again: the
    agent calls `context_retriever.get_vehicle` (green *tool* events in the Activity
    panel) against live inventory stored in Redis and answers with current stock and
-   discount. *"What's the status of my order 4471?"* matches the slide-30 example.
+   discount. *"What's the status of my order 4471?"* matches the example on that slide.
    Finish with *"Given what you know about me, which car should I buy — and can I
    drive it home today?"* — long-term memories (top pick, budget) plus live stock
-   fuse into one answer: three sources, one prompt (slide 34).
+   fuse into one answer: three sources, one prompt (slide 39). This is Live demo 04 (slide 37).
 
 **Reset demo memory** (panel footer) wipes stored turns and long-term memories so the
 walkthrough can be re-run cleanly.

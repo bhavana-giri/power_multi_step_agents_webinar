@@ -70,7 +70,7 @@ SYSTEM_PROMPT = (
 STARTER_GROUPS = [
     {
         "label": "Session state",
-        "eyebrow": "Live demo 07",
+        "eyebrow": "Live demo 01",
         "hint": "Working memory holds recent turns — run these in order.",
         "chips": [
             {"title": "Hybrid SUVs", "prompt": "Show me hybrid SUVs."},
@@ -80,7 +80,7 @@ STARTER_GROUPS = [
     },
     {
         "label": "Durable facts",
-        "eyebrow": "Live demo 08",
+        "eyebrow": "Live demo 02",
         "hint": "A confirmed preference gets promoted to long-term memory.",
         "chips": [
             {
@@ -95,7 +95,7 @@ STARTER_GROUPS = [
     },
     {
         "label": "Relevant history",
-        "eyebrow": "Live demo 09",
+        "eyebrow": "Live demo 03",
         "hint": "A hybrid query pulls the right memories back into the prompt.",
         "chips": [
             {
@@ -121,7 +121,7 @@ STARTER_GROUPS = [
     },
     {
         "label": "Context Retriever + Memory",
-        "eyebrow": "Beyond memory",
+        "eyebrow": "Live demo 04",
         "hint": "Live inventory and orders via tools — try in Primitive Memory first to see the gap.",
         "chips": [
             {
