@@ -27,7 +27,6 @@ async function boot() {
   }
   renderModeToggle();
   renderStarters();
-  $("hero-title").textContent = state.config.hero_title;
 }
 boot();
 
