@@ -27,6 +27,16 @@ from backend.settings import Settings
 settings = Settings()
 app = FastAPI(title="Redis Agent Memory Demo")
 
+
+@app.middleware("http")
+async def no_cache_static(request, call_next):
+    # The demo UI iterates often; make sure browsers always revalidate
+    # frontend assets instead of serving a stale cached copy.
+    response = await call_next(request)
+    if not request.url.path.startswith("/api"):
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
 primitive = PrimitiveMemoryService(settings)
 agent_memory = AgentMemoryService(settings)
 
