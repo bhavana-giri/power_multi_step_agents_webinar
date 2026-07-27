@@ -3,6 +3,7 @@
 const state = {
   config: null,
   mode: localStorage.getItem("amd-mode") || "context_engine",
+  memoryOn: true,
   sessionNum: 1,
   sessionId: crypto.randomUUID(),
   messages: [], // {id, role, content, status, events: [], error}
@@ -123,6 +124,17 @@ $("brand").onclick = () => {
   renderConversation();
 };
 
+$("memory-toggle").onclick = () => {
+  state.memoryOn = !state.memoryOn;
+  $("memory-toggle-state").textContent = state.memoryOn ? "On" : "Off";
+  $("memory-toggle").classList.toggle("memory-off", !state.memoryOn);
+  toast(
+    state.memoryOn
+      ? "Memory on — context is rebuilt from Redis on every turn."
+      : "Memory off — nothing is read or stored. Every message is a blank slate."
+  );
+};
+
 // ── chat ────────────────────────────────────────────────
 
 $("hero-composer").onsubmit = (e) => {
@@ -158,7 +170,12 @@ async function submit(text) {
     const res = await fetch("/api/chat/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: trimmed, mode: state.mode, session_id: state.sessionId }),
+      body: JSON.stringify({
+        message: trimmed,
+        mode: state.mode,
+        session_id: state.sessionId,
+        memory_enabled: state.memoryOn,
+      }),
     });
     const reader = res.body.getReader();
     const decoder = new TextDecoder();

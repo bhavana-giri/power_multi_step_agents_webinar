@@ -40,6 +40,12 @@ The landing page has prefilled query chips grouped per slide. Suggested flow —
 run everything once in **Primitive Memory**, then repeat in **Real-time Context
 Engine** (or alternate per act):
 
+0. **The problem** (slides 03-05) — flip the top-bar **Memory** toggle to **Off**:
+   nothing is read or stored, no tools. Ask *"Show me hybrid SUVs."* then *"Which of
+   those has the best mileage?"* — the pronoun fails, and *"What do you remember
+   about my car preferences?"* gets a blank slate. That's the raw stateless LLM.
+   Flip Memory back **On** before the next act.
+
 1. **Session state** (Live demo 01, slide 07) — click the chips in order:
    *"Show me hybrid SUVs."* → *"Keep it under $35k."* → *"Which of those has the best
    mileage?"* Both modes follow the pronoun, because both hold session state. Open the

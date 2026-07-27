@@ -153,6 +153,7 @@ class ChatRequest(BaseModel):
     message: str
     mode: str = "context_engine"
     session_id: str
+    memory_enabled: bool = True
 
 
 class ResetRequest(BaseModel):
@@ -192,6 +193,57 @@ def _timer() -> float:
 
 def _ms(start: float) -> int:
     return int((time.perf_counter() - start) * 1000)
+
+
+# ── memory off: the stateless baseline ───────────────────
+
+
+async def _stateless_turn(req: ChatRequest) -> AsyncIterator[str]:
+    """No memory handled at all: the raw LLM, one message at a time.
+
+    This is the deck's opening problem (slides 03-05): nothing is read,
+    nothing is stored, no tools — every call is a blank slate.
+    """
+    if not settings.openai_configured():
+        yield _sse({"type": "error", "message": "OPENAI_API_KEY is not set."})
+        yield _sse({"type": "done"})
+        return
+
+    yield _sse({"type": "status", "text": "Memory off — answering from this message only…"})
+    system = SYSTEM_PROMPT + (
+        "\n\nMemory is DISABLED for this conversation. You have no conversation "
+        "history, no memory context, and no tools — only the current message. "
+        "If the user refers to something said earlier, explain that you have no "
+        "memory of previous messages."
+    )
+    chat_messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": req.message},
+    ]
+    answer = ""
+    start = _timer()
+    try:
+        async for delta in _stream_llm(chat_messages):
+            answer += delta
+            yield _sse({"type": "delta", "text": delta})
+    except Exception as exc:
+        yield _sse({"type": "error", "message": f"OpenAI request failed: {exc}"})
+        yield _sse({"type": "done"})
+        return
+    yield _sse(
+        {
+            "type": "event",
+            "name": "openai.chat (memory off)",
+            "kind": "llm",
+            "durationMs": _ms(start),
+            "payload": {
+                "model": settings.openai_chat_model,
+                "context_messages": len(chat_messages),
+                "note": "Nothing was read from or written to memory.",
+            },
+        }
+    )
+    yield _sse({"type": "done"})
 
 
 # ── primitive mode turn ──────────────────────────────────
@@ -556,7 +608,9 @@ async def config() -> JSONResponse:
 
 @app.post("/api/chat/stream")
 async def chat_stream(req: ChatRequest) -> StreamingResponse:
-    if req.mode == "primitive":
+    if not req.memory_enabled:
+        generator = _stateless_turn(req)
+    elif req.mode == "primitive":
         generator = _primitive_turn(req)
     else:
         generator = _context_engine_turn(req)
