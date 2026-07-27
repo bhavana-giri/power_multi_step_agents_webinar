@@ -75,9 +75,9 @@ function renderStarters() {
     const head = document.createElement("div");
     head.className = "starter-group-head";
     head.innerHTML =
-      `<span class="starter-group-eyebrow">${group.eyebrow}</span>` +
+      (group.eyebrow ? `<span class="starter-group-eyebrow">${group.eyebrow}</span>` : "") +
       `<span class="starter-group-label">${group.label}</span>` +
-      `<span class="starter-group-hint">${group.hint || ""}</span>`;
+      (group.hint ? `<span class="starter-group-hint">${group.hint}</span>` : "");
     g.appendChild(head);
     const chips = document.createElement("div");
     chips.className = "starter-chips";

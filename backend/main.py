@@ -70,8 +70,6 @@ SYSTEM_PROMPT = (
 STARTER_GROUPS = [
     {
         "label": "Session state",
-        "eyebrow": "Live demo 01",
-        "hint": "Working memory holds recent turns — run these in order.",
         "chips": [
             {"title": "Hybrid SUVs", "prompt": "Show me hybrid SUVs."},
             {"title": "Under $35k", "prompt": "Keep it under $35k."},
@@ -80,8 +78,6 @@ STARTER_GROUPS = [
     },
     {
         "label": "Durable facts",
-        "eyebrow": "Live demo 02",
-        "hint": "A confirmed preference gets promoted to long-term memory.",
         "chips": [
             {
                 "title": "Remember my budget",
@@ -95,8 +91,6 @@ STARTER_GROUPS = [
     },
     {
         "label": "Relevant history",
-        "eyebrow": "Live demo 03",
-        "hint": "A hybrid query pulls the right memories back into the prompt.",
         "chips": [
             {
                 "title": "My preferences?",
@@ -110,8 +104,6 @@ STARTER_GROUPS = [
     },
     {
         "label": "Session two: recall",
-        "eyebrow": "In practice",
-        "hint": "Click “New session” in the top bar first, then ask.",
         "chips": [
             {
                 "title": "I'm back — recommend",
@@ -121,8 +113,6 @@ STARTER_GROUPS = [
     },
     {
         "label": "Context Retriever + Memory",
-        "eyebrow": "Live demo 04",
-        "hint": "",
         "chips": [
             {
                 "title": "In stock today?",
