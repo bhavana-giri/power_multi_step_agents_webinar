@@ -27,6 +27,7 @@ async function boot() {
   }
   renderModeToggle();
   renderStarters();
+  $("hero-title").textContent = state.config.hero_title;
 }
 boot();
 
@@ -42,10 +43,12 @@ function renderModeToggle() {
       "mode-toggle-option" +
       (m.id === "context_engine" ? " engine" : "") +
       (state.mode === m.id ? " active" : "");
-    btn.innerHTML = `<span>${m.label}</span>`;
+    btn.innerHTML = `<span>${m.label}</span><small>${m.sublabel}</small>`;
     btn.onclick = () => setMode(m.id);
     wrap.appendChild(btn);
   }
+  const current = state.config.modes.find((m) => m.id === state.mode);
+  $("mode-description").textContent = current ? current.description : "";
   $("panel-btn-label").textContent =
     state.mode === "primitive" ? "RedisVL Memory" : "Redis Agent Memory";
 }
