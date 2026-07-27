@@ -196,23 +196,29 @@ button { cursor: pointer; border: none; background: none; }
   margin-top: 28px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
-  max-width: 720px;
+  max-width: 760px;
 }
-.starter-group { display: flex; flex-direction: column; gap: 6px; }
-.starter-group-head { display: flex; align-items: baseline; gap: 10px; }
+.starter-group {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+  gap: 14px;
+}
+.starter-group-head { display: flex; align-items: baseline; gap: 10px; justify-content: flex-end; }
 .starter-group-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--redis);
-  background: var(--redis-soft);
-  border-radius: 4px;
-  padding: 2px 6px;
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: #a7abb8;
 }
-.starter-group-label { font-size: 0.82rem; font-weight: 700; }
+.starter-group-label {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: #a7abb8;
+  text-align: right;
+  letter-spacing: 0.01em;
+}
 .starter-group-hint { font-size: 0.74rem; color: var(--text-tertiary); }
 .starter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .starter-chip {
