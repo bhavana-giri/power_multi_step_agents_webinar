@@ -48,12 +48,8 @@ function renderModeToggle() {
   }
   const current = state.config.modes.find((m) => m.id === state.mode);
   $("mode-description").textContent = current ? current.description : "";
-  const panelLabels = {
-    primitive: "RedisVL Memory",
-    context_engine: "Redis Agent Memory",
-    iris: "Redis Iris",
-  };
-  $("panel-btn-label").textContent = panelLabels[state.mode] || "Redis Memory";
+  $("panel-btn-label").textContent =
+    state.mode === "primitive" ? "RedisVL Memory" : "Redis Agent Memory";
 }
 
 function setMode(mode) {

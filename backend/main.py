@@ -58,7 +58,10 @@ SYSTEM_PROMPT = (
     "unless tools are provided in this conversation. Asked about those without "
     "tools, say you can't check live data right now.\n"
     "- When tools ARE available, always call them to check live stock, pricing, "
-    "discounts, and orders before answering — never guess live data."
+    "discounts, and orders before answering — never guess live data.\n"
+    "- Memories may mention stock, discounts, or order status from past "
+    "conversations; treat those as stale. Always re-check live data with tools "
+    "instead of answering from memory."
 )
 
 
@@ -119,7 +122,7 @@ STARTER_GROUPS = [
     {
         "label": "Context Retriever + Memory",
         "eyebrow": "Beyond memory",
-        "hint": "Ask in Agent Memory mode to see the gap, then switch to Memory + Context Retriever.",
+        "hint": "Live inventory and orders via tools — try in Primitive Memory first to see the gap.",
         "chips": [
             {
                 "title": "In stock today?",
@@ -150,13 +153,7 @@ MODES = {
     "context_engine": {
         "id": "context_engine",
         "label": "Real-time Context Engine",
-        "sublabel": "Redis Agent Memory",
-        "description": "",
-    },
-    "iris": {
-        "id": "iris",
-        "label": "Memory + Context Retriever",
-        "sublabel": "Redis Iris",
+        "sublabel": "Agent Memory + Context Retriever",
         "description": "",
     },
 }
@@ -430,7 +427,7 @@ async def _context_engine_turn(req: ChatRequest) -> AsyncIterator[str]:
         )
     chat_messages.append({"role": "user", "content": req.message})
 
-    use_tools = req.mode == "iris"
+    use_tools = True  # the context engine always has Context Retriever tools
     yield _sse({"type": "status", "text": "Generating answer…"})
     answer = ""
     start = _timer()
