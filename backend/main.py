@@ -19,6 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 
+from backend import live_data
 from backend.agent_memory import AgentMemoryService, event_text
 from backend.catalog import catalog_prompt_block
 from backend.primitive_memory import PrimitiveMemoryService
@@ -51,7 +52,13 @@ SYSTEM_PROMPT = (
     "- Honor any user preferences, budgets, or decisions provided in the "
     "memory context sections below. Mention that you remembered them when relevant.\n"
     "- If the user asks what you remember and no memory context is provided, say "
-    "plainly that you have no record of previous conversations. Never invent memories."
+    "plainly that you have no record of previous conversations. Never invent memories.\n"
+    "- The inventory above is the sales catalog (models and list prices only). You "
+    "have NO access to live stock, discounts, delivery times, or order systems "
+    "unless tools are provided in this conversation. Asked about those without "
+    "tools, say you can't check live data right now.\n"
+    "- When tools ARE available, always call them to check live stock, pricing, "
+    "discounts, and orders before answering — never guess live data."
 )
 
 
@@ -109,6 +116,25 @@ STARTER_GROUPS = [
             },
         ],
     },
+    {
+        "label": "Context Retriever + Memory",
+        "eyebrow": "Beyond memory",
+        "hint": "Ask in Agent Memory mode to see the gap, then switch to Memory + Context Retriever.",
+        "chips": [
+            {
+                "title": "In stock today?",
+                "prompt": "Is the Toyota RAV4 Hybrid in stock today, and is there any discount?",
+            },
+            {
+                "title": "Order 4471 status",
+                "prompt": "What's the status of my order 4471?",
+            },
+            {
+                "title": "Drive home today?",
+                "prompt": "Given what you know about me, which car should I buy — and can I drive it home today?",
+            },
+        ],
+    },
 ]
 
 MODES = {
@@ -125,6 +151,12 @@ MODES = {
         "id": "context_engine",
         "label": "Real-time Context Engine",
         "sublabel": "Redis Agent Memory",
+        "description": "",
+    },
+    "iris": {
+        "id": "iris",
+        "label": "Memory + Context Retriever",
+        "sublabel": "Redis Iris",
         "description": "",
     },
 }
@@ -398,13 +430,71 @@ async def _context_engine_turn(req: ChatRequest) -> AsyncIterator[str]:
         )
     chat_messages.append({"role": "user", "content": req.message})
 
+    use_tools = req.mode == "iris"
     yield _sse({"type": "status", "text": "Generating answer…"})
     answer = ""
     start = _timer()
     try:
-        async for delta in _stream_llm(chat_messages):
-            answer += delta
-            yield _sse({"type": "delta", "text": delta})
+        if use_tools:
+            # Agentic loop: the model may call Context Retriever-style tools
+            # (live inventory / orders in Redis) before answering.
+            loop = asyncio.get_running_loop()
+            client = _openai_client()
+            for _ in range(4):
+                resp = await client.chat.completions.create(
+                    model=settings.openai_chat_model,
+                    messages=chat_messages,
+                    tools=live_data.TOOL_SCHEMAS,
+                    temperature=0.4,
+                )
+                msg = resp.choices[0].message
+                if not msg.tool_calls:
+                    answer = msg.content or ""
+                    break
+                chat_messages.append(
+                    {
+                        "role": "assistant",
+                        "content": msg.content or None,
+                        "tool_calls": [
+                            {
+                                "id": tc.id,
+                                "type": "function",
+                                "function": {
+                                    "name": tc.function.name,
+                                    "arguments": tc.function.arguments,
+                                },
+                            }
+                            for tc in msg.tool_calls
+                        ],
+                    }
+                )
+                for tc in msg.tool_calls:
+                    t0 = _timer()
+                    try:
+                        args = json.loads(tc.function.arguments or "{}")
+                    except json.JSONDecodeError:
+                        args = {}
+                    result = await loop.run_in_executor(
+                        None, lambda n=tc.function.name, a=args: live_data.execute_tool(settings, n, a)
+                    )
+                    yield _sse(
+                        {
+                            "type": "event",
+                            "name": f"context_retriever.{tc.function.name}",
+                            "kind": "tool",
+                            "durationMs": _ms(t0),
+                            "payload": {"arguments": args, "result": result},
+                        }
+                    )
+                    chat_messages.append(
+                        {"role": "tool", "tool_call_id": tc.id, "content": json.dumps(result)}
+                    )
+            for i in range(0, len(answer), 48):
+                yield _sse({"type": "delta", "text": answer[i : i + 48]})
+        else:
+            async for delta in _stream_llm(chat_messages):
+                answer += delta
+                yield _sse({"type": "delta", "text": delta})
     except Exception as exc:
         yield _sse({"type": "error", "message": f"OpenAI request failed: {exc}"})
         yield _sse({"type": "done"})

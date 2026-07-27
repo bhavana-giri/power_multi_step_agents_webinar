@@ -436,6 +436,7 @@ button { cursor: pointer; border: none; background: none; }
   color: var(--redis);
 }
 .event-kind.llm { background: #eef2ff; color: #4338ca; }
+.event-kind.tool { background: #e6f7ee; color: #0a7d4d; }
 .event-name { font-family: var(--font-mono); font-size: 0.76rem; flex: 1; }
 .event-ms { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-tertiary); }
 .event-payload {

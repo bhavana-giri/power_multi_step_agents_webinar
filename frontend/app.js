@@ -40,7 +40,7 @@ function renderModeToggle() {
     btn.type = "button";
     btn.className =
       "mode-toggle-option" +
-      (m.id === "context_engine" ? " engine" : "") +
+      (m.id !== "primitive" ? " engine" : "") +
       (state.mode === m.id ? " active" : "");
     btn.innerHTML = `<span>${m.label}</span><small>${m.sublabel}</small>`;
     btn.onclick = () => setMode(m.id);
@@ -48,8 +48,12 @@ function renderModeToggle() {
   }
   const current = state.config.modes.find((m) => m.id === state.mode);
   $("mode-description").textContent = current ? current.description : "";
-  $("panel-btn-label").textContent =
-    state.mode === "primitive" ? "RedisVL Memory" : "Redis Agent Memory";
+  const panelLabels = {
+    primitive: "RedisVL Memory",
+    context_engine: "Redis Agent Memory",
+    iris: "Redis Iris",
+  };
+  $("panel-btn-label").textContent = panelLabels[state.mode] || "Redis Memory";
 }
 
 function setMode(mode) {
