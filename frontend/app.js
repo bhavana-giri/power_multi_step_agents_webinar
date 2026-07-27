@@ -465,7 +465,8 @@ $("reset-btn").onclick = async () => {
     const data = await res.json();
     const bits = [];
     if (data.primitive_cleared) bits.push("RedisVL history cleared");
-    if (data.long_term_deleted) bits.push(`${data.long_term_deleted} long-term memories deleted`);
+    if (data.agent_memory_cleared)
+      bits.push(`Agent Memory: ${data.long_term_deleted} long-term memories deleted`);
     $("reset-note").textContent = bits.join(" · ") || "Nothing to reset.";
     if ((data.errors || []).length) $("reset-note").textContent += ` (${data.errors.join("; ")})`;
   } catch {

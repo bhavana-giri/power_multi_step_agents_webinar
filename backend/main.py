@@ -489,7 +489,12 @@ async def memory_dashboard(mode: str = "context_engine", session_id: str | None 
 @app.post("/api/memory/reset")
 async def memory_reset(req: ResetRequest) -> JSONResponse:
     """Wipe demo state so the walkthrough can be re-run cleanly."""
-    result: dict[str, Any] = {"primitive_cleared": False, "long_term_deleted": 0, "errors": []}
+    result: dict[str, Any] = {
+        "primitive_cleared": False,
+        "agent_memory_cleared": False,
+        "long_term_deleted": 0,
+        "errors": [],
+    }
     if primitive.is_configured():
         try:
             loop = asyncio.get_running_loop()
@@ -500,6 +505,7 @@ async def memory_reset(req: ResetRequest) -> JSONResponse:
     if agent_memory.is_configured():
         try:
             result["long_term_deleted"] = await agent_memory.delete_all_long_term()
+            result["agent_memory_cleared"] = True
         except Exception as exc:
             result["errors"].append(f"agent memory: {exc}")
     return JSONResponse(result)
