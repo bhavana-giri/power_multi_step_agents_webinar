@@ -1,0 +1,7 @@
+fastapi>=0.115
+uvicorn>=0.30
+openai>=1.40
+redisvl>=0.4
+redis>=5.0
+httpx>=0.27
+python-dotenv>=1.0

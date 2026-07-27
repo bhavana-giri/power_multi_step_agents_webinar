@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redis Motors — Agent Memory Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="app" class="shell shell--landing">
+    <header class="topbar">
+      <div class="topbar-brand" id="brand" role="button" tabindex="0">
+        <span class="brand-mark">R</span>
+        <div class="brand-text">
+          <span class="brand-name">Redis Motors</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span class="session-badge" id="session-badge">Session 1</span>
+        <button class="btn btn-ghost" id="new-session-btn" type="button" title="Start session two — same user, new session. Primitive memory forgets; the context engine remembers.">
+          ⟳ New session
+        </button>
+        <button class="btn btn-context" id="panel-btn" type="button">
+          <span class="redis-dot"></span><span id="panel-btn-label">Redis Memory</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Landing / empty state -->
+      <section class="empty-state" id="empty-state">
+        <div class="mode-toggle" id="mode-toggle"></div>
+        <form class="composer composer--hero" id="hero-composer">
+          <input type="text" id="hero-input" placeholder="Ask about hybrid SUVs, budgets, or what I remember about you…" autocomplete="off" />
+          <button type="submit" class="composer-send" aria-label="Send">↑</button>
+        </form>
+        <div class="starter-strip" id="starter-strip"></div>
+      </section>
+
+      <!-- Conversation -->
+      <section class="conversation" id="conversation" hidden>
+        <div class="message-list" id="message-list"></div>
+        <form class="composer composer--footer" id="footer-composer">
+          <input type="text" id="footer-input" placeholder="Follow up…" autocomplete="off" />
+          <button type="submit" class="composer-send" aria-label="Send">↑</button>
+        </form>
+      </section>
+    </main>
+
+    <!-- Activity / memory panel -->
+    <aside class="panel" id="panel">
+      <div class="panel-header">
+        <div class="panel-tabs">
+          <button class="panel-tab active" data-tab="memory" type="button">Memory</button>
+          <button class="panel-tab" data-tab="activity" type="button">Activity</button>
+        </div>
+        <div class="panel-header-actions">
+          <button class="btn btn-ghost btn-sm" id="refresh-memory-btn" type="button">Refresh</button>
+          <button class="panel-close" id="panel-close" type="button" aria-label="Close">✕</button>
+        </div>
+      </div>
+      <div class="panel-body" id="panel-body"></div>
+      <div class="panel-footer">
+        <button class="btn btn-danger-ghost btn-sm" id="reset-btn" type="button" title="Clear stored turns and long-term memories so the walkthrough can be re-run">
+          Reset demo memory
+        </button>
+        <span class="panel-footer-note" id="reset-note"></span>
+      </div>
+    </aside>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
