@@ -115,10 +115,7 @@ MODES = {
         "id": "context_engine",
         "label": "Real-time Context Engine",
         "sublabel": "Redis Agent Memory",
-        "description": (
-            "Working memory with a rolling summary, background extraction of durable facts, "
-            "and hybrid retrieval (meaning + metadata + recency) across sessions."
-        ),
+        "description": "",
     },
 }
 
