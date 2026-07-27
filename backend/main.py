@@ -135,10 +135,7 @@ MODES = {
         "id": "primitive",
         "label": "Primitive Memory",
         "sublabel": "RedisVL message history",
-        "description": (
-            "Raw turns stored per session with RedisVL MessageHistory. Recency window "
-            "+ in-session semantic recall. No summaries, no durable facts, no cross-session memory."
-        ),
+        "description": "",
     },
     "context_engine": {
         "id": "context_engine",
