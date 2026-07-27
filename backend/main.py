@@ -122,7 +122,7 @@ STARTER_GROUPS = [
     {
         "label": "Context Retriever + Memory",
         "eyebrow": "Live demo 04",
-        "hint": "Live inventory and orders via tools — try in Primitive Memory first to see the gap.",
+        "hint": "",
         "chips": [
             {
                 "title": "In stock today?",
